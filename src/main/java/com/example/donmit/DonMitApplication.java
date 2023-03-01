@@ -1,4 +1,4 @@
-package com.example.don_mit;
+package com.example.donmit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
