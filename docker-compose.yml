@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  # DB-MySQL
+  database-mysql:
+    container_name: database-mysql
+    image: mysql/mysql-server:8.0
+    env_file:
+      - .env
+    environment:
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
+
+
+  # API Server
+  application:
+    container_name: donmit-service
+    build: .
+    restart: on-failure
+    depends_on:
+      - database-mysql
+    ports:
+      - "18080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database-mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
