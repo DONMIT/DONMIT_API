@@ -13,16 +13,21 @@ import org.springframework.stereotype.Component;
 import dev.donmit.donmitapi.model.dto.res.TokenResDto;
 import dev.donmit.donmitapi.service.auth.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 // JWT 토큰 생성, 토큰 복호화 및 정보 추출, 토큰의 유효성 검증의 기능을 구현한 클래스
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 	// 토큰의 암호화/복호화를 위한 secret key
@@ -94,13 +99,26 @@ public class JwtTokenProvider {
 		return request.getHeader("Authorization");
 	}
 
-	// 토큰의 만료 일자를 확인하여 토큰의 유효성을 검증
+	// 토큰의 유효성 검증
 	public boolean validateToken(String jwtToken) {
 		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-			return !claims.getBody().getExpiration().before(new Date());
-		} catch (Exception e) {
-			return false;
+			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+			return true;
+		} catch (SecurityException e) {
+			log.info("Invalid JWT signature.");
+			throw new JwtException("Invalid JWT signature.");
+		} catch (MalformedJwtException e) {
+			log.info("Invalid JWT token.");
+			throw new JwtException("Invalid JWT token.");
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT token.");
+			throw new JwtException("Expired JWT token.");
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT token.");
+		} catch (IllegalArgumentException e) {
+			log.info("JWT token compact of handler are invalid.");
+			throw new JwtException("JWT token compact of handler are invalid.");
 		}
+		return false;
 	}
 }

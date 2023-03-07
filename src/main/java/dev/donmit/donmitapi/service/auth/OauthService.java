@@ -64,7 +64,7 @@ public class OauthService {
 		return oauthToken;
 	}
 
-	@Transactional
+	@Transactional(rollbackOn = JsonProcessingException.class)
 	public DefaultResponse saveGithubUser(String token) {
 		GithubProfile profile = findProfile(token);
 		User user = userRepository.findByGithubId(profile.getId());
@@ -79,7 +79,8 @@ public class OauthService {
 		// Refresh Token 저장
 		user.saveRefreshToken(tokenResDto.refreshToken());
 
-		return DefaultResponse.response(HttpStatus.OK.value(), "로그인에 성공하였습니다.", tokenResDto);
+		return DefaultResponse.response(HttpStatus.OK.value(), "로그인 성공",
+			tokenResDto);
 	}
 
 	public GithubProfile findProfile(String token) {

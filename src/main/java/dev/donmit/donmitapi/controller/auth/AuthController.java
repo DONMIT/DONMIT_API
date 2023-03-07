@@ -26,9 +26,14 @@ public class AuthController {
 		// 발급된 임시 코드를 통해 GitHub access Token 발급
 		OauthToken oauthToken = oauthService.getAccessToken(code, clientId, clientSecret);
 
-		// 발급 받은 Github accessToken 으로 GitHub에 저장되어 있는 회원 정보를 불러와, DB에 저장한 후 우리 서비스의 Access Token, Refresh Token 발급
-		DefaultResponse res = oauthService.saveGithubUser(oauthToken.access_token());
+		if (oauthToken != null) {
+			// 발급 받은 Github accessToken 으로 GitHub에 저장되어 있는 회원 정보를 불러와, DB에 저장한 후 우리 서비스의 Access Token, Refresh Token 발급
+			DefaultResponse res = oauthService.saveGithubUser(oauthToken.access_token());
+			return new ResponseEntity<>(res, HttpStatus.OK);
+		}
 
-		return new ResponseEntity<>(res, HttpStatus.OK);
+		return new ResponseEntity<>(
+			DefaultResponse.response(HttpStatus.OK.value(), "로그인 실패 ( => GitHub Access Token 발급 실패)"),
+			HttpStatus.OK);
 	}
 }

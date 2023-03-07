@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import dev.donmit.donmitapi.exception.CustomAuthenticationEntryPoint;
 import dev.donmit.donmitapi.model.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +21,9 @@ public class SecurityConfig {
 	private static final String[] AUTH_WHITELIST = {
 		"/", "/login/oauth2/**"
 	};
-	
+
 	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtExceptionFilter jwtExceptionFilter;
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
@@ -43,7 +45,11 @@ public class SecurityConfig {
 				.anyRequest().authenticated()
 			)
 
+			.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+			.and()
+
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
 			.build();
 	}
 }
