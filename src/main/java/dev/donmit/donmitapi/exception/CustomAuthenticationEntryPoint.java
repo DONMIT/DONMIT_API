@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException authException) throws IOException, ServletException {
@@ -32,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		body.put("path", request.getServletPath());
 
 		final ObjectMapper mapper = new ObjectMapper();
-		
+
 		// response 객체에 응답 객체를 넣어줌
 		mapper.writeValue(response.getOutputStream(), body);
 		response.setStatus(HttpServletResponse.SC_OK);

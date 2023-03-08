@@ -30,11 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// 유효한 토큰인지 확인한다.
 		if (token != null && jwtTokenProvider.validateToken(token)) {
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
-
 			// SecurityContext에 Authentication 객체를 저장한다.
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
-		filterChain.doFilter(request, response);
 
+		filterChain.doFilter(request, response);
 	}
 }
