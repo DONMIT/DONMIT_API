@@ -1,16 +1,17 @@
-package dev.donmit.donmitapi.service.auth;
+package dev.donmit.donmitapi.auth.application;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import dev.donmit.donmitapi.repository.user.UserRepository;
+import dev.donmit.donmitapi.auth.dao.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
+	
 	private final UserRepository userRepository;
 
 	@Override

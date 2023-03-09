@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.model.util;
+package dev.donmit.donmitapi.global.common;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +15,11 @@ import lombok.Getter;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+
 	@CreatedDate
 	@Column(updatable = false)
 	private LocalDateTime createdDate;
+	
 	@LastModifiedDate
 	private LocalDateTime modifiedDate;
 }

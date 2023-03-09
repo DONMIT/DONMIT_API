@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.config;
+package dev.donmit.donmitapi.global.config.jpa;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

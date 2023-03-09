@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.model.dto;
+package dev.donmit.donmitapi.global.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class DefaultResponse<T> {
+
 	// API 상태 코드
 	private Integer statusCode;
 

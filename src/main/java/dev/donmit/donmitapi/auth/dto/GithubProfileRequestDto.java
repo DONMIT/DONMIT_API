@@ -1,13 +1,12 @@
-package dev.donmit.donmitapi.model.util;
+package dev.donmit.donmitapi.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 
 @Getter
-public class GithubProfile {
+public class GithubProfileRequestDto {
 
-	// start: 회원가입시 저장하는 내용
 	public String login; // github 아이디
 
 	public Long id; // github 계정 고유 식별자
@@ -17,10 +16,9 @@ public class GithubProfile {
 
 	public String name; // github 이름
 
-	public String blog;
+	public String blog; // blog 주소
 
-	public String email;
-	// end
+	public String email; // email 주소
 
 	@JsonProperty("node_id")
 	public String nodeId;

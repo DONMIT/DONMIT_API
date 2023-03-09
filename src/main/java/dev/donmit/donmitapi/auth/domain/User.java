@@ -1,12 +1,12 @@
-package dev.donmit.donmitapi.model.entity;
+package dev.donmit.donmitapi.auth.domain;
 
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import dev.donmit.donmitapi.model.util.BaseEntity;
-import dev.donmit.donmitapi.model.util.GithubProfile;
+import dev.donmit.donmitapi.auth.dto.GithubProfileRequestDto;
+import dev.donmit.donmitapi.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -85,7 +85,7 @@ public class User extends BaseEntity implements UserDetails {
 		this.thumbnail = thumbnail;
 	}
 
-	public static User setGithubProfile(GithubProfile profile) {
+	public static User setGithubProfile(GithubProfileRequestDto profile) {
 		return User.builder()
 			.githubId(profile.getId())
 			.githubLogin(profile.getLogin())

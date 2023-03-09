@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.exception;
+package dev.donmit.donmitapi.global.config.security;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException authException) throws IOException, ServletException {

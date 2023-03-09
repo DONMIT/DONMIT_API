@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.config;
+package dev.donmit.donmitapi.global.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,14 +10,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import dev.donmit.donmitapi.exception.CustomAuthenticationEntryPoint;
-import dev.donmit.donmitapi.model.util.JwtTokenProvider;
+import dev.donmit.donmitapi.auth.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
 	private static final String[] AUTH_WHITELIST = {
 		"/", "/login/oauth2/**"
 	};

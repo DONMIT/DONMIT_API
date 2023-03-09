@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.model.util;
+package dev.donmit.donmitapi.auth.util;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -10,8 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import dev.donmit.donmitapi.model.dto.res.TokenResDto;
-import dev.donmit.donmitapi.service.auth.CustomUserDetailsService;
+import dev.donmit.donmitapi.auth.application.CustomUserDetailsService;
+import dev.donmit.donmitapi.auth.dto.TokenResponseDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+	
 	// 토큰의 암호화/복호화를 위한 secret key
 	@Value("${secretKey}")
 	private String secretKey;
@@ -50,7 +51,7 @@ public class JwtTokenProvider {
 
 	// JWT 토큰 생성
 	// JWT는 .을 기준으로 header, payload, signature 으로 이루어져 있다.
-	public TokenResDto createToken(String githubLogin, Long githubId) {
+	public TokenResponseDto createToken(String githubLogin, Long githubId) {
 
 		// payload 에는 토큰에 담을 정보가 들어가는데 이때, 정보의 단위를 클레임(claim)이라고 부르며, 클레임은 key-value 의 한 쌍으로 이루어져 있다.
 		// 토큰 제목 설정
@@ -73,7 +74,7 @@ public class JwtTokenProvider {
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 
-		return TokenResDto.builder()
+		return TokenResponseDto.builder()
 			.grantType("bearer")
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)

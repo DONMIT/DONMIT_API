@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.service.auth;
+package dev.donmit.donmitapi.auth.application;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,13 +13,13 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dev.donmit.donmitapi.model.dto.DefaultResponse;
-import dev.donmit.donmitapi.model.dto.res.OauthToken;
-import dev.donmit.donmitapi.model.dto.res.TokenResDto;
-import dev.donmit.donmitapi.model.entity.User;
-import dev.donmit.donmitapi.model.util.GithubProfile;
-import dev.donmit.donmitapi.model.util.JwtTokenProvider;
-import dev.donmit.donmitapi.repository.user.UserRepository;
+import dev.donmit.donmitapi.auth.dao.UserRepository;
+import dev.donmit.donmitapi.auth.domain.User;
+import dev.donmit.donmitapi.auth.dto.GithubProfileRequestDto;
+import dev.donmit.donmitapi.auth.dto.OauthTokenResponseDto;
+import dev.donmit.donmitapi.auth.dto.TokenResponseDto;
+import dev.donmit.donmitapi.auth.util.JwtTokenProvider;
+import dev.donmit.donmitapi.global.common.response.DefaultResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OauthService {
+public class AuthService {
+
 	private final UserRepository userRepository;
+
 	private final JwtTokenProvider jwtTokenProvider;
 
 	// GitHub에서 넘겨받은 임시 코드로부터 GitHub Access Token을 발급받는 메소드
-	public OauthToken getAccessToken(String code, String clientId, String clientSecret) {
+	public OauthTokenResponseDto getAccessToken(String code, String clientId, String clientSecret) {
 		RestTemplate rt = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -53,20 +55,20 @@ public class OauthService {
 		);
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		OauthToken oauthToken = null;
+		OauthTokenResponseDto oauthTokenResponseDto = null;
 
 		try {
-			oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthToken.class);
+			oauthTokenResponseDto = objectMapper.readValue(accessTokenResponse.getBody(), OauthTokenResponseDto.class);
 		} catch (JsonProcessingException e) {
 			log.error("error log = {}", e.getMessage());
 		}
 
-		return oauthToken;
+		return oauthTokenResponseDto;
 	}
 
 	@Transactional(rollbackOn = JsonProcessingException.class)
 	public DefaultResponse saveGithubUser(String token) {
-		GithubProfile profile = findProfile(token);
+		GithubProfileRequestDto profile = findProfile(token);
 		User user = userRepository.findByGithubId(profile.getId());
 
 		if (user == null) {
@@ -75,15 +77,15 @@ public class OauthService {
 		}
 
 		// Access Token과 Refresh Token 새로 발급
-		TokenResDto tokenResDto = jwtTokenProvider.createToken(user.getGithubLogin(), user.getGithubId());
+		TokenResponseDto tokenResponseDto = jwtTokenProvider.createToken(user.getGithubLogin(), user.getGithubId());
 		// Refresh Token 저장
-		user.saveRefreshToken(tokenResDto.refreshToken());
+		user.saveRefreshToken(tokenResponseDto.refreshToken());
 
 		return DefaultResponse.response(HttpStatus.OK.value(), "로그인 성공",
-			tokenResDto);
+			tokenResponseDto);
 	}
 
-	public GithubProfile findProfile(String token) {
+	public GithubProfileRequestDto findProfile(String token) {
 		RestTemplate rt = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -100,13 +102,14 @@ public class OauthService {
 		);
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		GithubProfile githubProfile = null;
+		GithubProfileRequestDto githubProfileRequestDto = null;
 		try {
-			githubProfile = objectMapper.readValue(githubProfileResponse.getBody(), GithubProfile.class);
+			githubProfileRequestDto = objectMapper.readValue(githubProfileResponse.getBody(),
+				GithubProfileRequestDto.class);
 		} catch (JsonProcessingException e) {
 			log.error("error log = {}", e.getMessage());
 		}
 
-		return githubProfile;
+		return githubProfileRequestDto;
 	}
 }

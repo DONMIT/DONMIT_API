@@ -1,4 +1,4 @@
-package dev.donmit.donmitapi.config;
+package dev.donmit.donmitapi.global.config.security;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws
 		ServletException, IOException {
