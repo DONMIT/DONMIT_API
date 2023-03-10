@@ -15,3 +15,10 @@ spring:
 
 secretKey: 'donmit-2023'
 
+client_id: 'a5bfcce3965274299f58'
+client_secret: 'f1b5a8135ca277782438a4c1a5cf562371770cfc'
+
+# WebClient Request/Response 로깅 레벨 설정
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG

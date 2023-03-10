@@ -18,3 +18,7 @@ secretKey: # secretKey
 client_id: # GitHub OAuth App Clined ID
 client_secret: # GitHub OAuth App Clined Secret
 
+# WebClient Request/Response 로깅 레벨 설정
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG

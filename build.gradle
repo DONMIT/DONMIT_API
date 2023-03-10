@@ -56,7 +56,9 @@ dependencies {
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testImplementation 'io.rest-assured:rest-assured:5.3.0'
+
+    // HTTP 통신 template을 RestTemplate에서 WebClient로 전환하기 위한 webflux 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 
