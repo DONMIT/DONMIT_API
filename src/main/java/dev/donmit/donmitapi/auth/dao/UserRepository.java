@@ -10,6 +10,6 @@ import dev.donmit.donmitapi.auth.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByGithubId(Long githubId);
-	
+
 	Optional<UserDetails> findByGithubLogin(String username);
 }

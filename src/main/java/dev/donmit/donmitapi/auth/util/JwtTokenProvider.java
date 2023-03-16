@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenProvider {
-	
 	// 토큰의 암호화/복호화를 위한 secret key
 	@Value("${secretKey}")
 	private String secretKey;

@@ -19,7 +19,6 @@ import reactor.netty.http.client.HttpClient;
 @Configuration
 @Slf4j
 public class WebClientConfig {
-
 	@Bean
 	public WebClient gitHubWebClient() {
 		// in-memory buffer 값 설정
