@@ -1,19 +1,13 @@
 package dev.donmit.donmitapi.auth.application;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.donmit.donmitapi.auth.dao.UserRepository;
 import dev.donmit.donmitapi.auth.domain.User;
@@ -74,30 +68,14 @@ public class AuthService {
 	}
 
 	public GithubProfileRequestDto findProfile(String token) {
-		RestTemplate rt = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + token);
-
-		HttpEntity<MultiValueMap<String, String>> githubProfileRequest =
-			new HttpEntity<>(headers);
-
-		ResponseEntity<String> githubProfileResponse = rt.exchange(
-			"https://api.github.com/user",
-			HttpMethod.POST,
-			githubProfileRequest,
-			String.class
-		);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		GithubProfileRequestDto githubProfileRequestDto = null;
-		try {
-			githubProfileRequestDto = objectMapper.readValue(githubProfileResponse.getBody(),
-				GithubProfileRequestDto.class);
-		} catch (JsonProcessingException e) {
-			log.error("error log = {}", e.getMessage());
-		}
-
-		return githubProfileRequestDto;
+		return gitHubWebClient.mutate()
+			.baseUrl("https://api.github.com")
+			.build()
+			.post()
+			.uri("/user")
+			.header("Authorization", "Bearer " + token)
+			.retrieve()
+			.bodyToMono(GithubProfileRequestDto.class)
+			.block();
 	}
 }
