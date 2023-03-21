@@ -1,10 +1,13 @@
 package dev.donmit.donmitapi.global.config.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,6 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
+
+	static List<String> skipFilterUrls = Arrays.asList("/", "/login/oauth2/**");
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return skipFilterUrls.stream().anyMatch(url -> new AntPathRequestMatcher(url).matches(request));
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws

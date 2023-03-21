@@ -1,9 +1,12 @@
 package dev.donmit.donmitapi.global.config.security;
 
+import static dev.donmit.donmitapi.global.config.security.JwtExceptionFilter.*;
+
 import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import dev.donmit.donmitapi.auth.util.JwtTokenProvider;
@@ -21,6 +24,11 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return skipFilterUrls.stream().anyMatch(url -> new AntPathRequestMatcher(url).matches(request));
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
