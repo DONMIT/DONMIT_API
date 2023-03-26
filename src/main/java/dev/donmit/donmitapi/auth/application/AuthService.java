@@ -1,6 +1,8 @@
 package dev.donmit.donmitapi.auth.application;
 
-import org.springframework.http.HttpStatus;
+import static dev.donmit.donmitapi.global.common.Constants.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,6 +17,7 @@ import dev.donmit.donmitapi.auth.dto.GithubProfileRequestDto;
 import dev.donmit.donmitapi.auth.dto.OauthTokenResponseDto;
 import dev.donmit.donmitapi.auth.dto.TokenResponseDto;
 import dev.donmit.donmitapi.auth.util.JwtTokenProvider;
+import dev.donmit.donmitapi.global.common.CustomResponse;
 import dev.donmit.donmitapi.global.common.response.DefaultResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,20 +27,32 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
+
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final WebClient gitHubWebClient;
 
+	@Value("${client_id}")
+	private String clientId;
+
+	@Value("${client_secret}")
+	private String clientSecret;
+
+	@Value("${gitHub.base_url.access_code}")
+	private String accessCodeBaseUrl;
+
+	@Value("${gitHub.base_url.profile}")
+	private String gitHubProfileBaseUrl;
+
 	// GitHub에서 넘겨받은 임시 코드로부터 GitHub Access Token을 발급받는 메소드
-	public OauthTokenResponseDto getAccessToken(String code, String clientId,
-		String clientSecret) {
+	public OauthTokenResponseDto getAccessToken(String code) {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("client_id", clientId);
-		params.add("client_secret", clientSecret);
-		params.add("code", code);
+		params.add(CLIENT_ID, clientId);
+		params.add(CLIENT_SECRET, clientSecret);
+		params.add(CODE, code);
 
 		return gitHubWebClient.mutate()
-			.baseUrl("https://github.com")
+			.baseUrl(accessCodeBaseUrl)
 			.build()
 			.post()
 			.uri("/login/oauth/access_token")
@@ -63,17 +78,18 @@ public class AuthService {
 		// Refresh Token 저장
 		user.saveRefreshToken(tokenResponseDto.refreshToken());
 
-		return DefaultResponse.response(HttpStatus.OK.value(), "로그인 성공",
+		return DefaultResponse.response(CustomResponse.LOGIN_SUCCESS.getStatus(),
+			CustomResponse.LOGIN_SUCCESS.getMessage(),
 			tokenResponseDto);
 	}
 
 	public GithubProfileRequestDto findProfile(String token) {
 		return gitHubWebClient.mutate()
-			.baseUrl("https://api.github.com")
+			.baseUrl(gitHubProfileBaseUrl)
 			.build()
 			.post()
 			.uri("/user")
-			.header("Authorization", "Bearer " + token)
+			.header(AUTHORIZATION, BEARER_SPACE + token)
 			.retrieve()
 			.bodyToMono(GithubProfileRequestDto.class)
 			.block();

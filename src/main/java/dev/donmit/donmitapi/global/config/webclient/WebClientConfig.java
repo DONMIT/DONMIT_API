@@ -1,5 +1,7 @@
 package dev.donmit.donmitapi.global.config.webclient;
 
+import static dev.donmit.donmitapi.global.common.Constants.*;
+
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -19,11 +21,12 @@ import reactor.netty.http.client.HttpClient;
 @Configuration
 @Slf4j
 public class WebClientConfig {
+
 	@Bean
 	public WebClient gitHubWebClient() {
 		// in-memory buffer 값 설정
 		ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
-			.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
+			.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
 			.build();
 
 		// request, response 정보 로깅
@@ -34,11 +37,11 @@ public class WebClientConfig {
 
 		// WebClient Timeout 설정 (5초)
 		HttpClient httpClient = HttpClient.create()
-			.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-			.responseTimeout(Duration.ofMillis(5000))
+			.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT)
+			.responseTimeout(Duration.ofMillis(RESPONSE_TIMEOUT))
 			.doOnConnected(conn ->
-				conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-					.addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
+				conn.addHandlerLast(new ReadTimeoutHandler(READ_TIME_OUT, TimeUnit.MILLISECONDS))
+					.addHandlerLast(new WriteTimeoutHandler(WRITE_TIME_OUT, TimeUnit.MILLISECONDS)));
 
 		return WebClient.builder()
 			.exchangeStrategies(exchangeStrategies)

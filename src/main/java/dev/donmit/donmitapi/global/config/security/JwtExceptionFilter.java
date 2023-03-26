@@ -1,5 +1,7 @@
 package dev.donmit.donmitapi.global.config.security;
 
+import static dev.donmit.donmitapi.global.common.Constants.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,10 +50,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
 		final Map<String, Object> body = new HashMap<>();
 
-		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		body.put("error", "Unauthorized");
-		body.put("message", cause.getMessage());
-		body.put("path", req.getServletPath());
+		body.put(STATUS, HttpServletResponse.SC_UNAUTHORIZED);
+		body.put(ERROR, UNAUTHORIZED);
+		body.put(MESSAGE, cause.getMessage());
+		body.put(PATH, req.getServletPath());
 
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(res.getOutputStream(), body);

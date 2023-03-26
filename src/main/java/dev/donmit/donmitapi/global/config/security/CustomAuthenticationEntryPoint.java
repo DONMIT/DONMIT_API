@@ -1,5 +1,7 @@
 package dev.donmit.donmitapi.global.config.security;
 
+import static dev.donmit.donmitapi.global.common.Constants.*;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +28,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		// 응답 객체 초기화
-		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		body.put("error", "Unauthorized");
-		body.put("message", authException.getMessage());
-		body.put("path", request.getServletPath());
+		body.put(STATUS, HttpServletResponse.SC_UNAUTHORIZED);
+		body.put(ERROR, UNAUTHORIZED);
+		body.put(MESSAGE, authException.getMessage());
+		body.put(PATH, request.getServletPath());
 
 		final ObjectMapper mapper = new ObjectMapper();
 

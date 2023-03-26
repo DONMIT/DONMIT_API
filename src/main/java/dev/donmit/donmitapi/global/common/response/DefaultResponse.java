@@ -1,12 +1,11 @@
 package dev.donmit.donmitapi.global.common.response;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DefaultResponse<T> {
 
 	// API 상태 코드
@@ -20,18 +19,16 @@ public class DefaultResponse<T> {
 
 	// 상태 코드 + 부가 설명 반환
 	public static <T> DefaultResponse<T> response(final Integer statusCode, final String message) {
-		return (DefaultResponse<T>)DefaultResponse.builder()
-			.statusCode(statusCode)
-			.message(message)
-			.build();
+		return new DefaultResponse<>(statusCode, message);
 	}
 
 	// 상태 코드 + 부가 설명 + 응답 데이터 반환
 	public static <T> DefaultResponse<T> response(final Integer statusCode, final String message, final T data) {
-		return (DefaultResponse<T>)DefaultResponse.builder()
-			.statusCode(statusCode)
-			.message(message)
-			.data(data)
-			.build();
+		return new DefaultResponse<>(statusCode, message, data);
+	}
+
+	private DefaultResponse(final Integer statusCode, final String message) {
+		this.statusCode = statusCode;
+		this.message = message;
 	}
 }

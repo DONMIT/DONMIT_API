@@ -1,5 +1,7 @@
 package dev.donmit.donmitapi.auth.util;
 
+import static dev.donmit.donmitapi.global.common.Constants.*;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -30,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
 	// 토큰의 암호화/복호화를 위한 secret key
 	@Value("${secretKey}")
 	private String secretKey;
@@ -74,7 +77,7 @@ public class JwtTokenProvider {
 			.compact();
 
 		return TokenResponseDto.builder()
-			.grantType("bearer")
+			.grantType(BEARER)
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.accessTokenExpireDate(ACCESS_TOKEN_VALID_TIME)
@@ -105,20 +108,15 @@ public class JwtTokenProvider {
 			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
 			return true;
 		} catch (SecurityException e) {
-			log.info("Invalid JWT signature.");
 			throw new JwtException("Invalid JWT signature.");
 		} catch (MalformedJwtException e) {
-			log.info("Invalid JWT token.");
 			throw new JwtException("Invalid JWT token.");
 		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT token.");
 			throw new JwtException("Expired JWT token.");
 		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT token.");
+			throw new JwtException("Unsupported JWT token.");
 		} catch (IllegalArgumentException e) {
-			log.info("JWT token compact of handler are invalid.");
 			throw new JwtException("JWT token compact of handler are invalid.");
 		}
-		return false;
 	}
 }
