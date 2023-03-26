@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/donmit
-    username: root
-    password: donmit
+    username: # database username
+    password: # database password
 
   jpa:
     hibernate:
@@ -13,10 +13,10 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
 
-secretKey: 'donmit-2023'
+secretKey: # secretKey
 
-client_id: 'a5bfcce3965274299f58'
-client_secret: 'f1b5a8135ca277782438a4c1a5cf562371770cfc'
+client_id: # GitHub OAuth App Clined ID
+client_secret: # GitHub OAuth App Clined Secret
 
 # WebClient Request/Response 로깅 레벨 설정
 logging:

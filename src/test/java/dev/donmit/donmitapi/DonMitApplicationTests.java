@@ -1,4 +1,4 @@
-package com.example.don_mit;
+package dev.donmit.donmitapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
